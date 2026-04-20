@@ -53,15 +53,15 @@ async function main() {
             console.log('looped')
         } while (contacts.length < totalRecord)
 
-        // contacts.forEach(async contct => {
-        //     const contactId = contct.id;
-        //     const notes = await axios.get(`${ENDPOINT}/contacts/${contactId}/notes`, { headers });
-        //     let exists = false;
-        //     if(notes.data.notes[0]) exists = check_if_ready_asap(notes.data.notes[0])
-        //     console.log(exists ? `${contct.email} no tag added` : `${contct.email} tag added`)
-        // })
+        contacts.forEach(async contct => {
+            const contactId = contct.id;
+            const notes = await axios.get(`${ENDPOINT}/contacts/${contactId}/notes`, { headers });
+            let exists = false;
+            if(notes.data.notes[0]) exists = check_if_ready_asap(notes.data.notes[0])
+            console.log(exists ? `${contct.email} no tag added` : `${contct.email} tag added`)
+        })
         // const contactId = response.data.contacts[1].id;
-        console.log(contacts.length)
+        // console.log(contacts.length)
         // 
     } catch (e) {
         console.log('error', e.response);
