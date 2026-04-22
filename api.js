@@ -45,3 +45,14 @@ export async function getContactNote(contactId) {
         console.log(e)
     }
 }
+
+export async function addTagToContact(contactId) {
+    try {
+        const response = await axios.post(`${ENDPOINT}/contacts/${contactId}/tags`, {
+            tags: ['lt-lead']
+        }, { headers });
+        return response.data
+    } catch (e) {
+        console.log(e)
+    }
+}
