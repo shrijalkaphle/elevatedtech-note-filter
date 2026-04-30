@@ -5,13 +5,14 @@ const contacts = JSON.parse(
     fs.readFileSync(new URL('./misc/notes.json', import.meta.url))
 );
 
-const BATCH_SIZE = 10000
+
 
 let result = []
 
 async function main() {
     // const csvHeader = "ContactId,Note,Message,Status"
     // let csvData = ''
+    const BATCH_SIZE = 10000
 
     const totalBatches = Math.ceil(contacts.length / BATCH_SIZE);
     for (let i = 0; i < contacts.length; i += BATCH_SIZE) {
@@ -43,7 +44,7 @@ async function main() {
                             contactId,
                             note,
                             message: 'not ready ASAP',
-                            status: false
+                            status: true
                         })
                     } else {
                         // csv = `${contactId},${JSON.stringify(note).replace(/,/g, '.')},ready ASAP,true\n`
@@ -51,7 +52,7 @@ async function main() {
                             contactId,
                             note,
                             message: 'ready ASAP',
-                            status: true
+                            status: false
                         })
                     }
                 }
@@ -82,11 +83,11 @@ function status() {
     const status = JSON.parse(
         fs.readFileSync(new URL('./status.json', import.meta.url))
     );
-    
+
     const tagAdding = []
 
     status.map(stat => {
-        if(stat.status === true) {
+        if (stat.status === true) {
             tagAdding.push(stat)
         }
     })
@@ -98,5 +99,66 @@ function status() {
     });
 }
 
+async function addTag() {
+    const contacts = JSON.parse(
+        fs.readFileSync(new URL('./not-ready-asap.json', import.meta.url))
+    );
+
+    const BATCH_SIZE = 100
+    const report = []
+    // contacts.map(cont => {
+    //     const note = cont.note
+    //     const hasRelatedNote = check_if_note_is_related(note)
+    //     if(hasRelatedNote) {
+    //         report.push(cont)
+    //     }
+    // })
+    const totalBatches = Math.ceil(contacts.length / BATCH_SIZE);
+    for (let i = 0; i < contacts.length; i += BATCH_SIZE) {
+        const batch = contacts.slice(i, i + BATCH_SIZE);
+        const batchIndex = Math.floor(i / BATCH_SIZE) + 1;
+        console.log(`Starting batch ${batchIndex}/${totalBatches} (items ${i + 1}–${i + batch.length})`);
+
+        const batchResults = await Promise.all(
+            batch.map(async (contact) => {
+                const { contactId, note, status } = contact
+
+                if (status) {
+                    // add tag
+                    report.push({
+                        contactId,
+                        note,
+                        tagAdded: true
+                    })
+                } else {
+                    report.push({
+                        contactId,
+                        note,
+                        tagAdded: false
+                    })
+                }
+
+                // fs.writeFile('tag-add-status.json', JSON.stringify(report, null, 2), (err) => {
+                //     if (err) throw err;
+                // });
+
+
+            })
+        )
+    }
+
+    console.log(report.length)
+}
+
+async function statv2() {
+    const stat = JSON.parse(
+        fs.readFileSync(new URL('./tag-add-status.json', import.meta.url))
+    );
+
+    console.log(stat.length)
+}
+
 // main()
-status()
+// status()
+// addTag()
+statv2()
