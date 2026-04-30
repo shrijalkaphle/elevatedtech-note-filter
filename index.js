@@ -10,8 +10,8 @@ const BATCH_SIZE = 10000
 let result = []
 
 async function main() {
-    const csvHeader = "ContactId,Note,Message,Status"
-    let csvData = ''
+    // const csvHeader = "ContactId,Note,Message,Status"
+    // let csvData = ''
 
     const totalBatches = Math.ceil(contacts.length / BATCH_SIZE);
     for (let i = 0; i < contacts.length; i += BATCH_SIZE) {
@@ -22,12 +22,12 @@ async function main() {
         const batchResults = await Promise.all(
             batch.map(async (_note) => {
                 const { contactId, note } = _note
-                let csv = ''
+                // let csv = ''
 
                 // check if note exists and question exists
                 const hasRelatedNote = check_if_note_is_related(note)
                 if (!hasRelatedNote) {
-                    csv = `${contactId},${note ? JSON.stringify(note)?.replace(/,/g, '.') : 'no note'},note doesnt have question,false\n`
+                    // csv = `${contactId},${note ? JSON.stringify(note)?.replace(/,/g, '.') : 'no note'},note doesnt have question,false\n`
                     result.push({
                         contactId,
                         note,
@@ -38,7 +38,7 @@ async function main() {
                     // check if contact ready to start immidiately
                     const readyToStart = check_if_contact_is_ready(note);
                     if (readyToStart) {
-                        csv = `${contactId},${JSON.stringify(note).replace(/,/g, '.')},not ready ASAP,false\n`
+                        // csv = `${contactId},${JSON.stringify(note).replace(/,/g, '.')},not ready ASAP,false\n`
                         result.push({
                             contactId,
                             note,
@@ -46,7 +46,7 @@ async function main() {
                             status: false
                         })
                     } else {
-                        csv = `${contactId},${JSON.stringify(note).replace(/,/g, '.')},ready ASAP,true\n`
+                        // csv = `${contactId},${JSON.stringify(note).replace(/,/g, '.')},ready ASAP,true\n`
                         result.push({
                             contactId,
                             note,
@@ -56,7 +56,7 @@ async function main() {
                     }
                 }
 
-                csvData = `${csvData}${csv}`
+                // csvData = `${csvData}${csv}`
             })
         );
 
@@ -68,10 +68,10 @@ async function main() {
         }
     }
 
-    fs.writeFile('output.csv', `${csvHeader}\n${csvData}`, (err) => {
-        if (err) throw err;
-        console.log('CSV file saved!');
-    });
+    // fs.writeFile('output.csv', `${csvHeader}\n${csvData}`, (err) => {
+    //     if (err) throw err;
+    //     console.log('CSV file saved!');
+    // });
     fs.writeFile('status.json', JSON.stringify(result, null, 2), (err) => {
         if (err) throw err;
         console.log('CSV file saved!');
